@@ -1,0 +1,29 @@
+services:
+  nginx:
+    image: nginx:latest
+    platform: linux/amd64
+    ports:
+      - "82:80"
+    volumes:
+      - ./htdocs:/var/www/html
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - php74
+    networks:
+      - php74_app-network
+
+  php74:
+    build:
+      context: ./php
+      dockerfile: Dockerfile
+    platform: linux/amd64
+    volumes:
+      - ./htdocs:/var/www/html
+      - ./php.ini:/usr/local/etc/php/php.ini
+      - ./db.ini:/var/secrets/db.ini
+    networks:
+      - php74_app-network
+
+networks:
+  php74_app-network:
+    external: true
